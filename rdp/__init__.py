@@ -21,17 +21,20 @@ def pldist(x0, x1, x2):
     by the points ``x1`` and ``x2``.
 
     :param x0: a point
-    :type x0: a 2x1 numpy array
+    :type x0: a 2x1 or 3x1 numpy array
     :param x1: a point of the line
-    :type x1: 2x1 numpy array
+    :type x1: 2x1 or 3x1 numpy array
     :param x2: another point of the line
-    :type x2: 2x1 numpy array
+    :type x2: 2x1 or 3x1 numpy array
     """
-    if x1[0] == x2[0]:
-        return np.abs(x0[0] - x1[0])
-
-    return np.divide(np.linalg.norm(np.linalg.det([x2 - x1, x1 - x0])),
-                     np.linalg.norm(x2 - x1))
+    if x0.shape[0] == 2:
+        if x1[0] == x2[0]:
+            return np.abs(x0[0] - x1[0])
+        
+        return np.divide(np.linalg.norm(np.linalg.det([x2 - x1, x1 - x0])),
+                         np.linalg.norm(x2 - x1))
+    elif x0.shape[0] == 3:
+        return np.divide(np.linalg.norm(np.cross(x2 - x1, x1 - x0)), np.linalg.norm(x2 - x1))
 
 
 def _rdp(M, epsilon, dist):
@@ -39,7 +42,7 @@ def _rdp(M, epsilon, dist):
     Simplifies a given array of points.
 
     :param M: an array
-    :type M: Nx2 numpy array
+    :type M: Nx2 or Nx3 numpy array
     :param epsilon: epsilon in the rdp algorithm
     :type epsilon: float
     :param dist: distance function
@@ -69,7 +72,7 @@ def _rdp_nn(seq, epsilon, dist):
     Simplifies a given array of points.
 
     :param seq: a series of points
-    :type seq: sequence of 2-tuples
+    :type seq: sequence of 2-tuples or 3-tuples
     :param epsilon: epsilon in the rdp algorithm
     :type epsilon: float
     :param dist: distance function
@@ -83,7 +86,7 @@ def rdp(M, epsilon=0, dist=pldist):
     Simplifies a given array of points.
 
     :param M: a series of points
-    :type M: either a Nx2 numpy array or sequence of 2-tuples
+    :type M: either a Nx2/Nx3 numpy array or sequence of 2/3-tuples
     :param epsilon: epsilon in the rdp algorithm
     :type epsilon: float
     :param dist: distance function
